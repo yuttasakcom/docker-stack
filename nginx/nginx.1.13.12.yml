@@ -1,0 +1,35 @@
+version: '3.5'
+
+services:
+
+  nginx:
+    image: nginx:1.13.12
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        max_failure_ratio: 0.5
+      resources:
+        reservations:
+          memory: 20m
+    configs:
+      - source: nginx.conf
+        target: /etc/nginx/nginx.conf
+      - source: web.conf
+        target: /etc/nginx/sites/web.conf
+    ports:
+      - "80:80"
+    networks:
+      - nginx
+
+configs:
+  nginx.conf:
+    external: true
+  web.conf:
+    external: true
+
+networks:
+  nginx:
+    external: true
